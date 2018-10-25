@@ -1,10 +1,10 @@
 import {NotFoundError, NetworkError, BadRequestError} from "./errors";
+import HorizonAxiosClient from './horizon_axios_client';
 import forEach from 'lodash/forEach';
 
 let URI = require("urijs");
 let URITemplate = require("urijs/src/URITemplate");
 
-let axios = require("axios");
 var EventSource = (typeof window === 'undefined') ? require('eventsource') : window.EventSource;
 
 /**
@@ -162,7 +162,7 @@ export class CallBuilder {
 
     // Temp fix for: https://github.com/stellar/js-stellar-sdk/issues/15
     url.setQuery('c', Math.random());
-    return axios.get(url.toString())
+    return HorizonAxiosClient.get(url.toString())
       .then(response => response.data)
       .catch(this._handleNetworkError);
   }

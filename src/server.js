@@ -15,10 +15,10 @@ import {EffectCallBuilder} from "./effect_call_builder";
 import {FriendbotBuilder} from "./friendbot_builder";
 import {AssetsCallBuilder} from "./assets_call_builder";
 import { TradeAggregationCallBuilder } from "./trade_aggregation_call_builder";
+import HorizonAxiosClient from './horizon_axios_client';
 import {xdr} from "stellar-base";
 import isString from "lodash/isString";
 
-let axios = require("axios");
 let URI = require("urijs");
 let URITemplate = require("urijs").URITemplate;
 
@@ -54,7 +54,7 @@ export class Server {
      */
     submitTransaction(transaction) {
         let tx = encodeURIComponent(transaction.toEnvelope().toXDR().toString("base64"));
-        return axios.post(
+        return HorizonAxiosClient.post(
               URI(this.serverURL).segment('transactions').toString(),
               `tx=${tx}`,
               {timeout: SUBMIT_TRANSACTION_TIMEOUT}
