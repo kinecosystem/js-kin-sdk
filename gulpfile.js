@@ -57,7 +57,8 @@ gulp.task('build:browser', ['lint:src'], function() {
       output: { library: 'StellarSdk' },
       module: {
         loaders: [
-          { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'}
+          { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'},
+          { test: /\.json$/, loader: 'json'}
         ],
       },
       plugins: [
