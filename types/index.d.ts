@@ -11,7 +11,7 @@
 
 /// <reference types="node" />
 
-import { AssetType, Asset, Memo, MemoType, Transaction } from 'kin-base';
+import { AssetType, Asset, Memo, MemoType, Transaction } from '@kinecosystem/kin-base';
 
 // Re-KinBase
 export {
@@ -46,7 +46,7 @@ export {
     sign,
     verify,
     xdr
-} from 'kin-base';
+} from '@kinecosystem/kin-base';
 
 // Shorthands, not-to-export.
 export {};
