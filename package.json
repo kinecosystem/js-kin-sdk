@@ -1,6 +1,6 @@
 {
   "name": "@kinecosystem/kin-sdk",
-  "version": "0.20.2",
+  "version": "0.20.3",
   "description": "kin-sdk is a library for working with the Stellar Horizon server on Kin Network.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
