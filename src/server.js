@@ -1,4 +1,4 @@
-import {NotFoundError, NetworkError, BadRequestError, BadResponseError} from "./errors";
+import {BadResponseError} from "./errors";
 
 import {AccountCallBuilder} from "./account_call_builder";
 import {AccountResponse} from "./account_response";
@@ -14,14 +14,13 @@ import {PaymentCallBuilder} from "./payment_call_builder";
 import {EffectCallBuilder} from "./effect_call_builder";
 import {FriendbotBuilder} from "./friendbot_builder";
 import {AssetsCallBuilder} from "./assets_call_builder";
-import { TradeAggregationCallBuilder } from "./trade_aggregation_call_builder";
-import isString from "lodash/isString";
+import {TradeAggregationCallBuilder} from "./trade_aggregation_call_builder";
 
 let axios = require("axios");
 let URI = require("urijs");
 let URITemplate = require("urijs").URITemplate;
 
-export const SUBMIT_TRANSACTION_TIMEOUT = 60*1000;
+export const SUBMIT_TRANSACTION_TIMEOUT = 60 * 1000;
 
 /**
  * Server handles the network connection to a [Horizon](https://www.stellar.org/developers/horizon/learn/index.html)
@@ -38,6 +37,12 @@ export class Server {
         let allowHttp = Config.isAllowHttp();
         if (typeof opts.allowHttp !== 'undefined') {
             allowHttp = opts.allowHttp;
+        }
+
+        if (typeof opts.headers !== 'undefined') {
+            opts.headers.foreach(header => {
+                axios.default.headers.common[header.key] = header.value;
+            });
         }
 
         if (this.serverURL.protocol() != 'https' && !allowHttp) {
