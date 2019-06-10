@@ -24,6 +24,12 @@ describe("server.js tests", function () {
       KinSdk.Config.setAllowHttp(true);
       expect(() => new KinSdk.Server('http://horizon-live.stellar.org:1337')).to.not.throw();
     });
+
+    it("allow insecure server with headers", function () {
+      const headers = new Map()
+		 .set("USER-AGENT", "kin-sdk");
+      expect(() => new KinSdk.Server('http://horizon-live.stellar.org:1337', {allowHttp: true, headers: headers})).to.not.throw();
+    });
   });
 
   describe('Server.loadAccount', function () {

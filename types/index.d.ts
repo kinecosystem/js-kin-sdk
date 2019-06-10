@@ -398,6 +398,7 @@ export namespace Server {
 
     interface Options {
         allowHttp: boolean;
+        headers?: Map<string, string>;
     }
 
     abstract class TradeAggregationCallBuilder extends CallBuilder<TradeAggregationRecord> { }

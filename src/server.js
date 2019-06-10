@@ -40,6 +40,11 @@ export class Server {
             allowHttp = opts.allowHttp;
         }
 
+        this.headers = {};
+        if (opts && opts.headers) {
+            this.headers = opts.headers;
+        }
+
         if (this.serverURL.protocol() != 'https' && !allowHttp) {
             throw new Error('Cannot connect to insecure horizon server');
         }
@@ -56,7 +61,7 @@ export class Server {
         return axios.post(
               URI(this.serverURL).segment('transactions').toString(),
               `tx=${tx}`,
-              {timeout: SUBMIT_TRANSACTION_TIMEOUT}
+              {timeout: SUBMIT_TRANSACTION_TIMEOUT, headers: this.headers}
             )
             .then(function(response) {
                 return response.data;
