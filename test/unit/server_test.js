@@ -27,7 +27,9 @@ describe("server.js tests", function () {
 
     it("allow insecure server with headers", function () {
       const headers = new Map()
-		 .set("USER-AGENT", "kin-sdk");
+          .set("USER-AGENT", "kin-sdk");
+      const temp = new KinSdk.Server('http://horizon-live.stellar.org:1337', {allowHttp: true, headers: headers});
+      console.log("headers", temp);
       expect(() => new KinSdk.Server('http://horizon-live.stellar.org:1337', {allowHttp: true, headers: headers})).to.not.throw();
     });
   });

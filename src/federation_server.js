@@ -26,6 +26,7 @@ export class FederationServer {
     // TODO `domain` regexp
     this.serverURL = URI(serverURL);
     this.domain = domain;
+    this.headers = opts && opts.headers ? opts.headers : {};
 
     let allowHttp = Config.isAllowHttp();
     if (typeof opts.allowHttp !== 'undefined') {
@@ -35,7 +36,7 @@ export class FederationServer {
     this.timeout = Config.getTimeout();
     if (typeof opts.timeout === 'number') {
       this.timeout = opts.timeout;
-    } 
+    }
 
     if (this.serverURL.protocol() != 'https' && !allowHttp) {
       throw new Error('Cannot connect to insecure federation server');
@@ -170,7 +171,7 @@ export class FederationServer {
   _sendRequest(url) {
     let timeout = this.timeout;
 
-    return axios.get(url.toString(), {maxContentLength: FEDERATION_RESPONSE_MAX_SIZE, timeout})
+    return axios.get(url.toString(), {maxContentLength: FEDERATION_RESPONSE_MAX_SIZE, timeout, headers: this.headers})
       .then(response => {
         if (typeof response.data.memo != "undefined" && typeof response.data.memo != 'string') {
           throw new Error("memo value should be of type string");

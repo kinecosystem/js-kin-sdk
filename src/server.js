@@ -34,15 +34,11 @@ export const SUBMIT_TRANSACTION_TIMEOUT = 60*1000;
 export class Server {
     constructor(serverURL, opts = {}) {
         this.serverURL = URI(serverURL);
+        this.headers = opts && opts.headers ? opts.headers :{};
 
         let allowHttp = Config.isAllowHttp();
         if (typeof opts.allowHttp !== 'undefined') {
             allowHttp = opts.allowHttp;
-        }
-
-        this.headers = {};
-        if (opts && opts.headers) {
-            this.headers = opts.headers;
         }
 
         if (this.serverURL.protocol() != 'https' && !allowHttp) {
