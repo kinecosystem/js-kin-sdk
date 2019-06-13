@@ -15,8 +15,8 @@ import {BadRequestError} from "./errors";
  * @param {...string} resourceParams Parameters for selected resource
  */
 export class OfferCallBuilder extends CallBuilder {
-    constructor(serverUrl, resource, ...resourceParams) {
-        super(serverUrl);
+    constructor(serverUrl, headers, resource, ...resourceParams) {
+        super(serverUrl, headers);
         if (resource === 'accounts') {
             this.url.segment([resource, ...resourceParams, 'offers']);
         } else {

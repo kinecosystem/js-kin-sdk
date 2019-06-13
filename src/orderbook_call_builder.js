@@ -10,8 +10,8 @@ import {CallBuilder} from "./call_builder";
  * @param {Asset} buying Asset being bought
  */
 export class OrderbookCallBuilder extends CallBuilder {
-    constructor(serverUrl, selling, buying) {
-        super(serverUrl);
+    constructor(serverUrl, headers, selling, buying) {
+        super(serverUrl, headers);
         this.url.segment('order_book');
         if (!selling.isNative()) {
             this.url.setQuery("selling_asset_type", selling.getAssetType());
