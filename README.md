@@ -51,7 +51,7 @@ relative to your html file.
 
 2. require/import it in your JavaScript:
   ```js
-  var SdkSdk = require('kin-sdk');
+  var SdkSdk = require('@kinecosystem/kin-sdk');
   ```
 
 #### Help! I'm having trouble installing the SDK on Windows
