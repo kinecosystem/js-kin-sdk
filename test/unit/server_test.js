@@ -27,9 +27,7 @@ describe("server.js tests", function () {
 
     it("allow insecure server with headers", function () {
       const headers = new Map()
-          .set("USER-AGENT", "kin-sdk");
-      const temp = new KinSdk.Server('http://horizon-live.stellar.org:1337', {allowHttp: true, headers: headers});
-      console.log("headers", temp);
+          .set("user-agent", "kin-sdk");
       expect(() => new KinSdk.Server('http://horizon-live.stellar.org:1337', {allowHttp: true, headers: headers})).to.not.throw();
     });
   });
@@ -119,6 +117,7 @@ describe("server.js tests", function () {
       this.server.loadAccount("GBAH7FQMC3CZJ4WD6GE7G7YXCIU36LC2IHXQ7D5MQAUO4PODOWIVLSFS")
         .then(response => {
           // Response data
+          console.log("test", response);
           expect(response.account_id).to.be.equal("GBAH7FQMC3CZJ4WD6GE7G7YXCIU36LC2IHXQ7D5MQAUO4PODOWIVLSFS");
           expect(response.subentry_count).to.be.equal(5);
           expect(response.transactions).to.be.function;

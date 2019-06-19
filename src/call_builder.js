@@ -15,7 +15,7 @@ var EventSource = (typeof window === 'undefined') ? require('eventsource') : win
  * @class CallBuilder
  */
 export class CallBuilder {
-  constructor(serverUrl, headers) {
+  constructor(serverUrl, headers = {}) {
     this.url = serverUrl;
     this.filter = [];
     this.headers = headers ? headers : {};
@@ -211,7 +211,7 @@ export class CallBuilder {
           return Promise.reject(new NetworkError(error.response.statusText, error.response.data));
       }
     } else {
-      return Promise.reject(new Error(error));
+      return Promise.reject(error);
     }
   }
 
