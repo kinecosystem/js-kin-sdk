@@ -25,8 +25,8 @@ import {CallBuilder} from './call_builder';
  * @param {string} destinationAmount The amount, denominated in the destination asset, that any returned path should be able to satisfy.
  */
 export class PathCallBuilder extends CallBuilder {
-    constructor(serverUrl, source, destination, destinationAsset, destinationAmount) {
-        super(serverUrl);
+    constructor(serverUrl, headers, source, destination, destinationAsset, destinationAmount) {
+        super(serverUrl, headers);
         this.url.segment('paths');
         this.url.setQuery('destination_account', destination);
         this.url.setQuery('source_account', source);

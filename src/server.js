@@ -40,6 +40,13 @@ export class Server {
             allowHttp = opts.allowHttp;
         }
 
+        this.headers = {};
+        if (opts && opts.headers) {
+            for (const key of opts.headers.keys()) {
+                this.headers[key] = opts.headers.get(key);
+            }
+        }
+
         if (this.serverURL.protocol() != 'https' && !allowHttp) {
             throw new Error('Cannot connect to insecure horizon server');
         }
@@ -56,7 +63,7 @@ export class Server {
         return axios.post(
               URI(this.serverURL).segment('transactions').toString(),
               `tx=${tx}`,
-              {timeout: SUBMIT_TRANSACTION_TIMEOUT}
+              {timeout: SUBMIT_TRANSACTION_TIMEOUT, headers: this.headers}
             )
             .then(function(response) {
                 return response.data;
@@ -75,7 +82,7 @@ export class Server {
      * @returns {AccountCallBuilder}
      */
     accounts() {
-        return new AccountCallBuilder(URI(this.serverURL));
+        return new AccountCallBuilder(URI(this.serverURL), this.headers);
     }
 
     /**
@@ -83,7 +90,7 @@ export class Server {
      * @returns {LedgerCallBuilder}
      */
     ledgers() {
-        return new LedgerCallBuilder(URI(this.serverURL));
+        return new LedgerCallBuilder(URI(this.serverURL), this.headers);
     }
 
     /**
@@ -91,7 +98,7 @@ export class Server {
      * @returns {TransactionCallBuilder}
      */
     transactions() {
-        return new TransactionCallBuilder(URI(this.serverURL));
+        return new TransactionCallBuilder(URI(this.serverURL), this.headers);
     }
 
     /**
@@ -108,7 +115,7 @@ export class Server {
      * @returns OfferCallBuilder
      */
     offers(resource, ...resourceParams) {
-        return new OfferCallBuilder(URI(this.serverURL), resource, ...resourceParams);
+        return new OfferCallBuilder(URI(this.serverURL), this.headers, resource, ...resourceParams);
     }
 
     /**
@@ -118,7 +125,7 @@ export class Server {
      * @returns {OrderbookCallBuilder}
      */
     orderbook(selling, buying) {
-        return new OrderbookCallBuilder(URI(this.serverURL), selling, buying);
+        return new OrderbookCallBuilder(URI(this.serverURL), this.headers, selling, buying);
     }
 
     /**
@@ -126,7 +133,7 @@ export class Server {
      * @returns {TradesCallBuilder}
      */
     trades() {
-        return new TradesCallBuilder(URI(this.serverURL));
+        return new TradesCallBuilder(URI(this.serverURL), this.headers);
     }
 
     /**
@@ -134,7 +141,7 @@ export class Server {
      * @returns {OperationCallBuilder}
      */
     operations() {
-        return new OperationCallBuilder(URI(this.serverURL));
+        return new OperationCallBuilder(URI(this.serverURL), this.headers);
     }
 
     /**
@@ -161,7 +168,7 @@ export class Server {
      * @returns {@link PathCallBuilder}
      */
     paths(source, destination, destinationAsset, destinationAmount) {
-        return new PathCallBuilder(URI(this.serverURL), source, destination, destinationAsset, destinationAmount);
+        return new PathCallBuilder(URI(this.serverURL), this.headers, source, destination, destinationAsset, destinationAmount);
     }
 
     /**
@@ -169,7 +176,7 @@ export class Server {
      * @returns {PaymentCallBuilder}
      */
     payments() {
-        return new PaymentCallBuilder(URI(this.serverURL));
+        return new PaymentCallBuilder(URI(this.serverURL), this.headers);
     }
 
     /**
@@ -177,7 +184,7 @@ export class Server {
      * @returns {EffectCallBuilder}
      */
     effects() {
-        return new EffectCallBuilder(URI(this.serverURL));
+        return new EffectCallBuilder(URI(this.serverURL), this.headers);
     }
 
     /**
@@ -186,7 +193,7 @@ export class Server {
      * @private
      */
     friendbot(address) {
-        return new FriendbotBuilder(URI(this.serverURL), address);
+        return new FriendbotBuilder(URI(this.serverURL), this.headers, address);
     }
 
     /**
@@ -194,7 +201,7 @@ export class Server {
      * @returns {AssetsCallBuilder}
      */
     assets() {
-        return new AssetsCallBuilder(URI(this.serverURL));
+        return new AssetsCallBuilder(URI(this.serverURL), this.headers);
     }
 
 
@@ -224,6 +231,6 @@ export class Server {
      * @returns {TradeAggregationCallBuilder}
      */
     tradeAggregation(base, counter, start_time, end_time, resolution, offset){
-        return new TradeAggregationCallBuilder(URI(this.serverURL), base, counter, start_time, end_time, resolution, offset);
+        return new TradeAggregationCallBuilder(URI(this.serverURL), this.headers, base, counter, start_time, end_time, resolution, offset);
     }
 }

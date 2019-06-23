@@ -15,9 +15,10 @@ var EventSource = (typeof window === 'undefined') ? require('eventsource') : win
  * @class CallBuilder
  */
 export class CallBuilder {
-  constructor(serverUrl) {
+  constructor(serverUrl, headers = {}) {
     this.url = serverUrl;
     this.filter = [];
+    this.headers = headers ? headers : {};
     this.originalSegments = this.url.segment() || [];
   }
 
@@ -162,7 +163,7 @@ export class CallBuilder {
 
     // Temp fix for: https://github.com/stellar/js-stellar-sdk/issues/15
     url.setQuery('c', Math.random());
-    return axios.get(url.toString())
+    return axios.get(url.toString(), {headers: this.headers})
       .then(response => response.data)
       .catch(this._handleNetworkError);
   }
@@ -210,7 +211,7 @@ export class CallBuilder {
           return Promise.reject(new NetworkError(error.response.statusText, error.response.data));
       }
     } else {
-      return Promise.reject(new Error(error));
+      return Promise.reject(error);
     }
   }
 

@@ -103,7 +103,7 @@ export class Server {
 
 export namespace Server {
     abstract class CallBuilder<T extends Horizon.BaseResponse = Horizon.BaseResponse> {
-        constructor(serverUrl: string)
+        constructor(serverUrl: string, headers?: { [key: string]: string });
         call(): Promise<CollectionPage<T>>;
         cursor(cursor: string): this;
         limit(limit: number | string): this;
@@ -398,6 +398,7 @@ export namespace Server {
 
     interface Options {
         allowHttp: boolean;
+        headers?: Map<string, string>;
     }
 
     abstract class TradeAggregationCallBuilder extends CallBuilder<TradeAggregationRecord> { }
