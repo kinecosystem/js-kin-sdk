@@ -102,8 +102,9 @@ export class Server {
 }
 
 export namespace Server {
+
     abstract class CallBuilder<T extends Horizon.BaseResponse = Horizon.BaseResponse> {
-        constructor(serverUrl: string, headers?: { [key: string]: string });
+        constructor(serverUrl: string, headers?: { [key: string]: string }, retry?: Options["retry"]);
         call(): Promise<CollectionPage<T>>;
         cursor(cursor: string): this;
         limit(limit: number | string): this;
@@ -399,6 +400,11 @@ export namespace Server {
     interface Options {
         allowHttp: boolean;
         headers?: Map<string, string>;
+        retry?: {
+            retries?: number,
+            retryDelay?: Function,
+            retryCondition?: Function
+        }
     }
 
     abstract class TradeAggregationCallBuilder extends CallBuilder<TradeAggregationRecord> { }

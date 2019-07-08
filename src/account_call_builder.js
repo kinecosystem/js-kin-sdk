@@ -12,8 +12,8 @@ import {CallBuilder} from "./call_builder";
  * @param {string} serverUrl Horizon server URL.
  */
 export class AccountCallBuilder extends CallBuilder {
-    constructor(serverUrl, headers) {
-        super(serverUrl, headers);
+    constructor(serverUrl, headers, retry) {
+        super(serverUrl, headers, retry);
         this.url.segment('accounts');
     }
 

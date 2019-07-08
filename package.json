@@ -90,6 +90,7 @@
   "dependencies": {
     "@kinecosystem/kin-base": "^0.20.2",
     "axios": "^0.18.0",
+    "axios-retry": "^3.1.2",
     "es6-promise": "^4.2.4",
     "event-source-polyfill": "^1.0.5",
     "eventsource": "^1.0.5",

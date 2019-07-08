@@ -1,5 +1,6 @@
 import {NotFoundError, NetworkError, BadRequestError} from "./errors";
 import forEach from 'lodash/forEach';
+import axiosRetry from 'axios-retry';
 
 let URI = require("urijs");
 let URITemplate = require("urijs/src/URITemplate");
@@ -15,10 +16,11 @@ var EventSource = (typeof window === 'undefined') ? require('eventsource') : win
  * @class CallBuilder
  */
 export class CallBuilder {
-  constructor(serverUrl, headers = {}) {
+  constructor(serverUrl, headers = {}, retry = {}) {
     this.url = serverUrl;
     this.filter = [];
-    this.headers = headers ? headers : {};
+    this.headers = headers;
+    this.retry = retry;
     this.originalSegments = this.url.segment() || [];
   }
 
@@ -163,6 +165,15 @@ export class CallBuilder {
 
     // Temp fix for: https://github.com/stellar/js-stellar-sdk/issues/15
     url.setQuery('c', Math.random());
+    axiosRetry(axios, this.retry);
+    axios.interceptors.request.use(config => {
+        const retryState = config['axios-retry'] || {};
+        if (retryState.retryCount > 0) {
+            config.headers['x-retry-count'] = retryState.retryCount;
+        }
+
+        return config;
+    });
     return axios.get(url.toString(), {headers: this.headers})
       .then(response => response.data)
       .catch(this._handleNetworkError);

@@ -1,4 +1,5 @@
 import clone from 'lodash/clone';
+import axiosRetry from "axios-retry";
 
 let defaultConfig = {
   allowHttp: false,
@@ -68,6 +69,25 @@ class Config {
   static setDefault() {
     config = clone(defaultConfig);
   }
+
+  /**
+   * Creates and returns the definition for the `retry` mechanism.
+   * @static
+   */
+  static configRetryDefault(retry) {
+    config.retry = retry ? retry : {};
+    if (!config.retry.retries) {
+        config.retry.retries = 0;
+    }
+    if (!config.retry.retryDelay) {
+        config.retry.retryDelay = axiosRetry.exponentialDelay;
+    }
+    if (!config.retry.retryCondition) {
+        config.retry.retryCondition = (error) => axiosRetry.isNetworkError(error) || axiosRetry.isRetryableError(error);
+    }
+    return clone(config.retry);
+  }
+
 }
 
 export {Config};
