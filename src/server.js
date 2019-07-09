@@ -50,15 +50,7 @@ export class Server {
         if (this.serverURL.protocol() != 'https' && !allowHttp) {
             throw new Error('Cannot connect to insecure horizon server');
         }
-    }
 
-    /**
-     * Submits a transaction to the network.
-     * @see [Post Transaction](https://www.stellar.org/developers/horizon/reference/transactions-create.html)
-     * @param {Transaction} transaction - The transaction to submit.
-     * @returns {Promise} Promise that resolves or rejects with response from horizon.
-     */
-    submitTransaction(transaction) {
         axiosRetry(axios, this.retry);
         axios.interceptors.request.use(config => {
             const retryState = config['axios-retry'] || {};
@@ -68,6 +60,15 @@ export class Server {
 
             return config;
         });
+    }
+
+    /**
+     * Submits a transaction to the network.
+     * @see [Post Transaction](https://www.stellar.org/developers/horizon/reference/transactions-create.html)
+     * @param {Transaction} transaction - The transaction to submit.
+     * @returns {Promise} Promise that resolves or rejects with response from horizon.
+     */
+    submitTransaction(transaction) {
         let tx = encodeURIComponent(transaction.toEnvelope().toXDR().toString("base64"));
         return axios.post(
               URI(this.serverURL).segment('transactions').toString(),

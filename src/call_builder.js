@@ -22,6 +22,16 @@ export class CallBuilder {
     this.headers = headers;
     this.retry = retry;
     this.originalSegments = this.url.segment() || [];
+
+    axiosRetry(axios, this.retry);
+    axios.interceptors.request.use(config => {
+        const retryState = config['axios-retry'] || {};
+        if (retryState.retryCount > 0) {
+            config.headers['x-retry-count'] = retryState.retryCount;
+        }
+
+        return config;
+    });
   }
 
   /**
@@ -165,15 +175,6 @@ export class CallBuilder {
 
     // Temp fix for: https://github.com/stellar/js-stellar-sdk/issues/15
     url.setQuery('c', Math.random());
-    axiosRetry(axios, this.retry);
-    axios.interceptors.request.use(config => {
-        const retryState = config['axios-retry'] || {};
-        if (retryState.retryCount > 0) {
-            config.headers['x-retry-count'] = retryState.retryCount;
-        }
-
-        return config;
-    });
     return axios.get(url.toString(), {headers: this.headers})
       .then(response => response.data)
       .catch(this._handleNetworkError);

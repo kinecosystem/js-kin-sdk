@@ -12,6 +12,7 @@
 /// <reference types="node" />
 
 import { AssetType, Asset, Memo, MemoType, Transaction } from '@kinecosystem/kin-base';
+import * as axios from "axios";
 
 // Re-KinBase
 export {
@@ -104,7 +105,7 @@ export class Server {
 export namespace Server {
 
     abstract class CallBuilder<T extends Horizon.BaseResponse = Horizon.BaseResponse> {
-        constructor(serverUrl: string, headers?: { [key: string]: string }, retry?: Options["retry"]);
+        constructor(serverUrl: string, headers?: { [key: string]: string }, retry?: RetryData);
         call(): Promise<CollectionPage<T>>;
         cursor(cursor: string): this;
         limit(limit: number | string): this;
@@ -397,14 +398,16 @@ export namespace Server {
         forTransaction(transactionId: string): this;
     }
 
+    interface RetryData {
+        retries?: number,
+        retryDelay?: (retryCount: number, error: axios.AxiosError) => number,
+        retryCondition?: (retryCount: number, error: axios.AxiosError) => number
+    }
+
     interface Options {
         allowHttp: boolean;
         headers?: Map<string, string>;
-        retry?: {
-            retries?: number,
-            retryDelay?: Function,
-            retryCondition?: Function
-        }
+        retry?: RetryData;
     }
 
     abstract class TradeAggregationCallBuilder extends CallBuilder<TradeAggregationRecord> { }
