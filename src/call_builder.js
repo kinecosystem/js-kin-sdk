@@ -1,6 +1,7 @@
 import {NotFoundError, NetworkError, BadRequestError} from "./errors";
 import forEach from 'lodash/forEach';
 import axiosRetry from 'axios-retry';
+import {Config} from "./config";
 
 let URI = require("urijs");
 let URITemplate = require("urijs/src/URITemplate");
@@ -20,7 +21,7 @@ export class CallBuilder {
     this.url = serverUrl;
     this.filter = [];
     this.headers = headers;
-    this.retry = retry;
+    this.retry = Object.assign(Config.getRetryDefault(), retry);
     this.originalSegments = this.url.segment() || [];
 
     axiosRetry(axios, this.retry);

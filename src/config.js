@@ -3,7 +3,12 @@ import axiosRetry from "axios-retry";
 
 let defaultConfig = {
   allowHttp: false,
-  timeout: 0
+  timeout: 0,
+  retry: {
+    retries: 0,
+    retryDelay: axiosRetry.exponentialDelay,
+    retryCondition: (error) => axiosRetry.isNetworkError(error) || axiosRetry.isRetryableError(error)
+  }
 };
 
 let config = clone(defaultConfig);
@@ -74,17 +79,7 @@ class Config {
    * Creates and returns the definition for the `retry` mechanism.
    * @static
    */
-  static configRetryDefault(retry) {
-    config.retry = retry ? retry : {};
-    if (!config.retry.retries) {
-        config.retry.retries = 0;
-    }
-    if (!config.retry.retryDelay) {
-        config.retry.retryDelay = axiosRetry.exponentialDelay;
-    }
-    if (!config.retry.retryCondition) {
-        config.retry.retryCondition = (error) => axiosRetry.isNetworkError(error) || axiosRetry.isRetryableError(error);
-    }
+  static getRetryDefault() {
     return clone(config.retry);
   }
 
