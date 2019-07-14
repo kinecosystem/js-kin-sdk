@@ -33,7 +33,7 @@ export const SUBMIT_TRANSACTION_TIMEOUT = 60*1000;
 export class Server {
     constructor(serverURL, opts = {}) {
         this.serverURL = URI(serverURL);
-        this.retry = Object.assign(Config.getRetryDefault(), opts.retry);
+        this.retry = Object.assign(Config.getRetry(), opts.retry);
 
         let allowHttp = Config.isAllowHttp();
         if (typeof opts.allowHttp !== 'undefined') {

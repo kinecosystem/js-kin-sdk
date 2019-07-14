@@ -79,7 +79,7 @@ class Config {
    * Creates and returns the definition for the `retry` mechanism.
    * @static
    */
-  static getRetryDefault() {
+  static getRetry() {
     return clone(config.retry);
   }
 

@@ -21,7 +21,7 @@ export class CallBuilder {
     this.url = serverUrl;
     this.filter = [];
     this.headers = headers;
-    this.retry = Object.assign(Config.getRetryDefault(), retry);
+    this.retry = Object.assign(Config.getRetry(), retry);
     this.originalSegments = this.url.segment() || [];
 
     axiosRetry(axios, this.retry);
