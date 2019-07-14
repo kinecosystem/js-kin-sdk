@@ -15,11 +15,10 @@ import {EffectCallBuilder} from "./effect_call_builder";
 import {FriendbotBuilder} from "./friendbot_builder";
 import {AssetsCallBuilder} from "./assets_call_builder";
 import { TradeAggregationCallBuilder } from "./trade_aggregation_call_builder";
-import isString from "lodash/isString";
+import axiosRetry from 'axios-retry';
 
-let axios = require("axios");
-let URI = require("urijs");
-let URITemplate = require("urijs").URITemplate;
+const axios = require("axios");
+const URI = require("urijs");
 
 export const SUBMIT_TRANSACTION_TIMEOUT = 60*1000;
 
@@ -34,6 +33,7 @@ export const SUBMIT_TRANSACTION_TIMEOUT = 60*1000;
 export class Server {
     constructor(serverURL, opts = {}) {
         this.serverURL = URI(serverURL);
+        this.retry = Object.assign(Config.getRetry(), opts.retry);
 
         let allowHttp = Config.isAllowHttp();
         if (typeof opts.allowHttp !== 'undefined') {
@@ -50,6 +50,16 @@ export class Server {
         if (this.serverURL.protocol() != 'https' && !allowHttp) {
             throw new Error('Cannot connect to insecure horizon server');
         }
+
+        axiosRetry(axios, this.retry);
+        axios.interceptors.request.use(config => {
+            const retryState = config['axios-retry'] || {};
+            if (retryState.retryCount > 0) {
+                config.headers['x-retry-count'] = retryState.retryCount;
+            }
+
+            return config;
+        });
     }
 
     /**
@@ -82,7 +92,7 @@ export class Server {
      * @returns {AccountCallBuilder}
      */
     accounts() {
-        return new AccountCallBuilder(URI(this.serverURL), this.headers);
+        return new AccountCallBuilder(URI(this.serverURL), this.headers, this.retry);
     }
 
     /**
@@ -90,7 +100,7 @@ export class Server {
      * @returns {LedgerCallBuilder}
      */
     ledgers() {
-        return new LedgerCallBuilder(URI(this.serverURL), this.headers);
+        return new LedgerCallBuilder(URI(this.serverURL), this.headers, this.retry);
     }
 
     /**
@@ -98,7 +108,7 @@ export class Server {
      * @returns {TransactionCallBuilder}
      */
     transactions() {
-        return new TransactionCallBuilder(URI(this.serverURL), this.headers);
+        return new TransactionCallBuilder(URI(this.serverURL), this.headers, this.retry);
     }
 
     /**
@@ -115,7 +125,7 @@ export class Server {
      * @returns OfferCallBuilder
      */
     offers(resource, ...resourceParams) {
-        return new OfferCallBuilder(URI(this.serverURL), this.headers, resource, ...resourceParams);
+        return new OfferCallBuilder(URI(this.serverURL), this.headers, this.retry, resource, ...resourceParams);
     }
 
     /**
@@ -125,7 +135,7 @@ export class Server {
      * @returns {OrderbookCallBuilder}
      */
     orderbook(selling, buying) {
-        return new OrderbookCallBuilder(URI(this.serverURL), this.headers, selling, buying);
+        return new OrderbookCallBuilder(URI(this.serverURL), this.headers, this.retry, selling, buying);
     }
 
     /**
@@ -133,7 +143,7 @@ export class Server {
      * @returns {TradesCallBuilder}
      */
     trades() {
-        return new TradesCallBuilder(URI(this.serverURL), this.headers);
+        return new TradesCallBuilder(URI(this.serverURL), this.headers, this.retry);
     }
 
     /**
@@ -141,7 +151,7 @@ export class Server {
      * @returns {OperationCallBuilder}
      */
     operations() {
-        return new OperationCallBuilder(URI(this.serverURL), this.headers);
+        return new OperationCallBuilder(URI(this.serverURL), this.headers, this.retry);
     }
 
     /**
@@ -168,7 +178,7 @@ export class Server {
      * @returns {@link PathCallBuilder}
      */
     paths(source, destination, destinationAsset, destinationAmount) {
-        return new PathCallBuilder(URI(this.serverURL), this.headers, source, destination, destinationAsset, destinationAmount);
+        return new PathCallBuilder(URI(this.serverURL), this.headers, this.retry, source, destination, destinationAsset, destinationAmount);
     }
 
     /**
@@ -176,7 +186,7 @@ export class Server {
      * @returns {PaymentCallBuilder}
      */
     payments() {
-        return new PaymentCallBuilder(URI(this.serverURL), this.headers);
+        return new PaymentCallBuilder(URI(this.serverURL), this.headers, this.retry);
     }
 
     /**
@@ -184,7 +194,7 @@ export class Server {
      * @returns {EffectCallBuilder}
      */
     effects() {
-        return new EffectCallBuilder(URI(this.serverURL), this.headers);
+        return new EffectCallBuilder(URI(this.serverURL), this.headers, this.retry);
     }
 
     /**
@@ -193,7 +203,7 @@ export class Server {
      * @private
      */
     friendbot(address) {
-        return new FriendbotBuilder(URI(this.serverURL), this.headers, address);
+        return new FriendbotBuilder(URI(this.serverURL), this.headers, this.retry, address);
     }
 
     /**
@@ -201,7 +211,7 @@ export class Server {
      * @returns {AssetsCallBuilder}
      */
     assets() {
-        return new AssetsCallBuilder(URI(this.serverURL), this.headers);
+        return new AssetsCallBuilder(URI(this.serverURL), this.headers, this.retry);
     }
 
 
@@ -231,6 +241,6 @@ export class Server {
      * @returns {TradeAggregationCallBuilder}
      */
     tradeAggregation(base, counter, start_time, end_time, resolution, offset){
-        return new TradeAggregationCallBuilder(URI(this.serverURL), this.headers, base, counter, start_time, end_time, resolution, offset);
+        return new TradeAggregationCallBuilder(URI(this.serverURL), this.headers, this.retry, base, counter, start_time, end_time, resolution, offset);
     }
 }

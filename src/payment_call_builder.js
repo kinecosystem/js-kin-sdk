@@ -10,8 +10,8 @@ export class PaymentCallBuilder extends CallBuilder {
      * @extends CallBuilder
      * @param {string} serverUrl Horizon server URL.
      */
-    constructor(serverUrl, headers) {
-        super(serverUrl, headers);
+    constructor(serverUrl, headers, retry) {
+        super(serverUrl, headers, retry);
         this.url.segment('payments');
     }
 

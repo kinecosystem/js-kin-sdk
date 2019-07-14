@@ -1,5 +1,7 @@
 import {NotFoundError, NetworkError, BadRequestError} from "./errors";
 import forEach from 'lodash/forEach';
+import axiosRetry from 'axios-retry';
+import {Config} from "./config";
 
 let URI = require("urijs");
 let URITemplate = require("urijs/src/URITemplate");
@@ -15,11 +17,22 @@ var EventSource = (typeof window === 'undefined') ? require('eventsource') : win
  * @class CallBuilder
  */
 export class CallBuilder {
-  constructor(serverUrl, headers = {}) {
+  constructor(serverUrl, headers = {}, retry = {}) {
     this.url = serverUrl;
     this.filter = [];
-    this.headers = headers ? headers : {};
+    this.headers = headers;
+    this.retry = Object.assign(Config.getRetry(), retry);
     this.originalSegments = this.url.segment() || [];
+
+    axiosRetry(axios, this.retry);
+    axios.interceptors.request.use(config => {
+        const retryState = config['axios-retry'] || {};
+        if (retryState.retryCount > 0) {
+            config.headers['x-retry-count'] = retryState.retryCount;
+        }
+
+        return config;
+    });
   }
 
   /**
